@@ -1,0 +1,96 @@
+name: Build Native Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: lil-curio-linux-amd64
+          - os: macos-13
+            artifact: lil-curio-macos-amd64
+          - os: macos-latest
+            artifact: lil-curio-macos-aarch64
+          - os: windows-latest
+            artifact: lil-curio-windows-amd64.exe
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
+
+      - name: Build fat JAR
+        run: mvn clean package -DskipTests
+
+      - name: Generate native-image configs (tracing agent)
+        shell: bash
+        run: |
+          CONFIG_DIR="src/main/resources/META-INF/native-image/dev.lilcurio/lil-curio"
+          mkdir -p "$CONFIG_DIR"
+          JAR="target/lil-curio-0.1.0-SNAPSHOT.jar"
+          AGENT="-agentlib:native-image-agent=config-merge-dir=$CONFIG_DIR"
+
+          java $AGENT -jar "$JAR" validate src/test/resources/schemas/json/valid-schema.json --type json --level full || true
+          java $AGENT -jar "$JAR" validate src/test/resources/schemas/json/invalid-syntax.json --type json --level syntax_only || true
+          java $AGENT -jar "$JAR" validate src/test/resources/schemas/json/valid-schema.json --type json --json || true
+          java $AGENT -jar "$JAR" compatibility src/test/resources/schemas/json/schema-v1.json src/test/resources/schemas/json/schema-v2-compatible.json --type json --level backward || true
+          java $AGENT -jar "$JAR" compatibility src/test/resources/schemas/json/schema-v1.json src/test/resources/schemas/json/schema-v2-incompatible.json --type json --level backward || true
+          java $AGENT -jar "$JAR" compatibility src/test/resources/schemas/json/schema-v1.json src/test/resources/schemas/json/schema-v2-incompatible.json --type json --level full --json || true
+          java $AGENT -jar "$JAR" --help || true
+          java $AGENT -jar "$JAR" --version || true
+
+      - name: Build native image
+        run: mvn -Pnative package -DskipTests
+
+      - name: Rename binary
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            mv target/lil-curio.exe target/${{ matrix.artifact }}
+          else
+            mv target/lil-curio target/${{ matrix.artifact }}
+          fi
+
+      - name: Smoke test
+        shell: bash
+        run: |
+          ./target/${{ matrix.artifact }} --version
+          ./target/${{ matrix.artifact }} validate src/test/resources/schemas/json/valid-schema.json --type json
+          ./target/${{ matrix.artifact }} compatibility src/test/resources/schemas/json/schema-v1.json src/test/resources/schemas/json/schema-v2-compatible.json --type json --level backward
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: target/${{ matrix.artifact }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
