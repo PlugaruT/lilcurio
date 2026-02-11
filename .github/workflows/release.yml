@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -28,7 +29,6 @@ jobs:
           java-version: '21'
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          native-image-job-reports: 'true'
 
       - name: Build fat JAR
         run: mvn clean package -DskipTests
@@ -36,7 +36,7 @@ jobs:
       - name: Generate native-image configs (tracing agent)
         shell: bash
         run: |
-          CONFIG_DIR="src/main/resources/META-INF/native-image/dev.lilcurio/lilcurio"
+          CONFIG_DIR="native-config"
           mkdir -p "$CONFIG_DIR"
           JAR="target/lilcurio-0.1.0-SNAPSHOT.jar"
           AGENT="-agentlib:native-image-agent=config-merge-dir=$CONFIG_DIR"
@@ -50,8 +50,19 @@ jobs:
           java $AGENT -jar "$JAR" --help || true
           java $AGENT -jar "$JAR" --version || true
 
+          echo "Generated configs:"
+          ls -la "$CONFIG_DIR"
+
       - name: Build native image
-        run: mvn -Pnative package -DskipTests
+        shell: bash
+        run: |
+          native-image \
+            -jar target/lilcurio-0.1.0-SNAPSHOT.jar \
+            -o target/lilcurio \
+            -H:ConfigurationFileDirectories=native-config \
+            -H:+ReportExceptionStackTraces \
+            --no-fallback \
+            --verbose
 
       - name: Rename binary
         shell: bash
