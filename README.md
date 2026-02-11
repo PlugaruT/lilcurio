@@ -4,6 +4,22 @@ Offline CLI for [Apicurio Schema Registry](https://www.apicur.io/registry/) rule
 
 Uses Apicurio's own `schema-util` libraries directly as a standalone tool.
 
+## Install (macOS)
+
+```bash
+# Apple Silicon
+curl -L https://github.com/PlugaruT/lilcurio/releases/latest/download/lilcurio-macos-aarch64 -o lilcurio
+chmod +x lilcurio
+sudo mv lilcurio /usr/local/bin/
+
+# Intel
+curl -L https://github.com/PlugaruT/lilcurio/releases/latest/download/lilcurio-macos-amd64 -o lilcurio
+chmod +x lilcurio
+sudo mv lilcurio /usr/local/bin/
+```
+
+Pre-built binaries for Linux and Windows are also available on the [Releases](../../releases) page.
+
 ## Usage
 
 ### Validate a schema
