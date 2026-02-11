@@ -7,13 +7,7 @@ Uses Apicurio's own `schema-util` libraries directly as a standalone tool.
 ## Install (macOS)
 
 ```bash
-# Apple Silicon
 curl -L https://github.com/PlugaruT/lilcurio/releases/latest/download/lilcurio-macos-aarch64 -o lilcurio
-chmod +x lilcurio
-sudo mv lilcurio /usr/local/bin/
-
-# Intel
-curl -L https://github.com/PlugaruT/lilcurio/releases/latest/download/lilcurio-macos-amd64 -o lilcurio
 chmod +x lilcurio
 sudo mv lilcurio /usr/local/bin/
 ```

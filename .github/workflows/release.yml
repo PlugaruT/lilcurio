@@ -13,8 +13,6 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact: lilcurio-linux-amd64
-          - os: macos-13
-            artifact: lilcurio-macos-amd64
           - os: macos-latest
             artifact: lilcurio-macos-aarch64
           - os: windows-latest
