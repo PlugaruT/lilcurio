@@ -1,4 +1,4 @@
-# lil-curio
+# lilcurio
 
 Offline CLI for [Apicurio Schema Registry](https://www.apicur.io/registry/) rule checking. Validate schemas and check compatibility between versions — no running registry needed.
 
@@ -9,7 +9,7 @@ Uses Apicurio's own `schema-util` libraries directly as a standalone tool.
 ### Validate a schema
 
 ```bash
-lil-curio validate schema.json --type json --level full
+lilcurio validate schema.json --type json --level full
 ```
 
 Validity levels: `full` (default), `syntax_only`, `none`
@@ -18,10 +18,10 @@ Validity levels: `full` (default), `syntax_only`, `none`
 
 ```bash
 # Check if v2 is backward-compatible with v1
-lil-curio compatibility v1.json v2.json --type json --level backward
+lilcurio compatibility v1.json v2.json --type json --level backward
 
 # Transitive: check v3 against all previous versions
-lil-curio compatibility v1.json v2.json v3.json --type json --level backward-transitive
+lilcurio compatibility v1.json v2.json v3.json --type json --level backward-transitive
 ```
 
 The last file is always the **proposed** new version. All preceding files are existing versions (oldest first).
@@ -32,10 +32,10 @@ Compatibility levels: `backward` (default), `backward-transitive`, `forward`, `f
 
 ```bash
 # Compare working tree version against last commit
-lil-curio diff schema.json --type json --level backward
+lilcurio diff schema.json --type json --level backward
 
 # Compare against a specific git ref (branch, tag, commit)
-lil-curio diff schema.json --type json --level backward --ref main
+lilcurio diff schema.json --type json --level backward --ref main
 ```
 
 Automatically retrieves the previous version from git and compares it with the current file on disk. The file must be tracked in a git repository.
@@ -61,7 +61,7 @@ Automatically retrieves the previous version from git and compares it with the c
 ### JSON output
 
 ```bash
-lil-curio compatibility v1.json v2.json --type json --level backward --json
+lilcurio compatibility v1.json v2.json --type json --level backward --json
 ```
 
 ```json
@@ -88,7 +88,7 @@ Requires Java 17+.
 
 ```bash
 mvn clean package
-java -jar target/lil-curio-0.1.0-SNAPSHOT.jar --help
+java -jar target/lilcurio-0.1.0-SNAPSHOT.jar --help
 ```
 
 ### Build a native binary
@@ -103,7 +103,7 @@ Requires [GraalVM](https://www.graalvm.org/) with `native-image`.
 mvn -Pnative package -DskipTests
 
 # Result
-./target/lil-curio --version
+./target/lilcurio --version
 ```
 
 ## Supported schema types

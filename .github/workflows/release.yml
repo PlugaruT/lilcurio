@@ -12,13 +12,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact: lil-curio-linux-amd64
+            artifact: lilcurio-linux-amd64
           - os: macos-13
-            artifact: lil-curio-macos-amd64
+            artifact: lilcurio-macos-amd64
           - os: macos-latest
-            artifact: lil-curio-macos-aarch64
+            artifact: lilcurio-macos-aarch64
           - os: windows-latest
-            artifact: lil-curio-windows-amd64.exe
+            artifact: lilcurio-windows-amd64.exe
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -38,9 +38,9 @@ jobs:
       - name: Generate native-image configs (tracing agent)
         shell: bash
         run: |
-          CONFIG_DIR="src/main/resources/META-INF/native-image/dev.lilcurio/lil-curio"
+          CONFIG_DIR="src/main/resources/META-INF/native-image/dev.lilcurio/lilcurio"
           mkdir -p "$CONFIG_DIR"
-          JAR="target/lil-curio-0.1.0-SNAPSHOT.jar"
+          JAR="target/lilcurio-0.1.0-SNAPSHOT.jar"
           AGENT="-agentlib:native-image-agent=config-merge-dir=$CONFIG_DIR"
 
           java $AGENT -jar "$JAR" validate src/test/resources/schemas/json/valid-schema.json --type json --level full || true
@@ -59,9 +59,9 @@ jobs:
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
-            mv target/lil-curio.exe target/${{ matrix.artifact }}
+            mv target/lilcurio.exe target/${{ matrix.artifact }}
           else
-            mv target/lil-curio target/${{ matrix.artifact }}
+            mv target/lilcurio target/${{ matrix.artifact }}
           fi
 
       - name: Smoke test

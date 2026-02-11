@@ -7,9 +7,9 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(
-        name = "lil-curio",
+        name = "lilcurio",
         mixinStandardHelpOptions = true,
-        version = "lil-curio 0.1.0",
+        version = "lilcurio 0.1.0",
         description = "Offline schema validation and compatibility checking " +
                 "using Apicurio Registry internals.",
         subcommands = {

@@ -6,12 +6,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-CONFIG_DIR="$PROJECT_DIR/src/main/resources/META-INF/native-image/dev.lilcurio/lil-curio"
+CONFIG_DIR="$PROJECT_DIR/src/main/resources/META-INF/native-image/dev.lilcurio/lilcurio"
 
 echo "==> Building fat JAR..."
 mvn -f "$PROJECT_DIR/pom.xml" clean package -DskipTests -q
 
-JAR="$PROJECT_DIR/target/lil-curio-0.1.0-SNAPSHOT.jar"
+JAR="$PROJECT_DIR/target/lilcurio-0.1.0-SNAPSHOT.jar"
 AGENT_OPTS="-agentlib:native-image-agent=config-merge-dir=$CONFIG_DIR"
 
 mkdir -p "$CONFIG_DIR"

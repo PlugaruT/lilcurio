@@ -6,11 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.lilcurio</groupId>
-    <artifactId>lil-curio</artifactId>
+    <artifactId>lilcurio</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>lil-curio</name>
+    <name>lilcurio</name>
     <description>Offline CLI for Apicurio Schema Registry rule checking</description>
 
     <properties>
@@ -148,7 +148,7 @@
                         </executions>
                         <configuration>
                             <mainClass>dev.lilcurio.LilCurio</mainClass>
-                            <imageName>lil-curio</imageName>
+                            <imageName>lilcurio</imageName>
                             <buildArgs>
                                 <buildArg>--no-fallback</buildArg>
                                 <buildArg>-H:+ReportExceptionStackTraces</buildArg>
