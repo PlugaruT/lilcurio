@@ -62,6 +62,7 @@ jobs:
             -H:ConfigurationFileDirectories=native-config \
             -H:+ReportExceptionStackTraces \
             --no-fallback \
+            --initialize-at-build-time=org.slf4j \
             --verbose
 
       - name: Rename binary
