@@ -16,8 +16,6 @@ jobs:
             artifact: lilcurio-linux-amd64
           - os: macos-latest
             artifact: lilcurio-macos-aarch64
-          - os: windows-latest
-            artifact: lilcurio-windows-amd64.exe
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -67,12 +65,7 @@ jobs:
 
       - name: Rename binary
         shell: bash
-        run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            mv target/lilcurio.exe target/${{ matrix.artifact }}
-          else
-            mv target/lilcurio target/${{ matrix.artifact }}
-          fi
+        run: mv target/lilcurio target/${{ matrix.artifact }}
 
       - name: Smoke test
         shell: bash
